@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using TensorStack.Common;
 using TensorStack.Image;
+using TensorStack.Providers;
 using TensorStack.StableDiffusion.Enums;
 using TensorStack.StableDiffusion.Pipelines.StableDiffusion;
 
@@ -41,9 +43,8 @@ namespace RyzenAI.Example
 
         public static async Task GenerateAsync(string modelPath, string prompt)
         {
-            var config = LoadConfig(modelPath);
-            var provider = Provider.CreateProvider();
-            config.SetProvider(provider);
+            var provider = Provider.GetProvider(DeviceType.GPU);
+            var config = LoadConfig(modelPath, provider);
             using (var pipeline = new StableDiffusionPipeline(config))
             {
                 var options = pipeline.DefaultOptions with { Prompt = prompt };
@@ -54,9 +55,9 @@ namespace RyzenAI.Example
         }
 
 
-        private static StableDiffusionConfig LoadConfig(string modelPath)
+        private static StableDiffusionConfig LoadConfig(string modelPath, ExecutionProvider provider)
         {
-            var config = StableDiffusionConfig.FromDefault("stable -diffusion-1.5-amdnpu", ModelType.Base);
+            var config = StableDiffusionConfig.FromDefault("stable -diffusion-1.5-amdnpu", ModelType.Base, provider);
             config.Tokenizer.Path = Path.Combine(modelPath, "tokenizer", "vocab.json");
             config.TextEncoder.Path = Path.Combine(modelPath, "text_encoder", "model.onnx");
             config.Unet.Path = Path.Combine(modelPath, "unet", "model_NCHW.onnx");

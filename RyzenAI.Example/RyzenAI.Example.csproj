@@ -11,15 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TensorStack.Providers.DML" Version="0.1.84" />
-    <PackageReference Include="TensorStack.Image.Bitmap" Version="0.1.84" />
-    <PackageReference Include="TensorStack.StableDiffusion" Version="0.1.84" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="zlib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="TensorStack.Providers.RyzenAI" Version="0.2.1" />
+    <PackageReference Include="TensorStack.Image.Bitmap" Version="0.2.1" />
+    <PackageReference Include="TensorStack.StableDiffusion" Version="0.2.1" />
   </ItemGroup>
 
 </Project>
