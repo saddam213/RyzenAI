@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Image;
 using TensorStack.Providers;
+using TensorStack.StableDiffusion.Common;
 using TensorStack.StableDiffusion.Enums;
 using TensorStack.StableDiffusion.Pipelines.StableDiffusion;
 
@@ -47,8 +48,12 @@ namespace RyzenAI.Example
             var config = LoadConfig(modelPath, provider);
             using (var pipeline = new StableDiffusionPipeline(config))
             {
+                var timestamp = Stopwatch.GetTimestamp();
+
                 var options = pipeline.DefaultOptions with { Prompt = prompt };
-                var result = await pipeline.RunAsync(options);
+                var result = await pipeline.RunAsync(options, ProgressCallback);
+
+                Console.WriteLine($"Total: {Stopwatch.GetElapsedTime(timestamp)}ms");
                 await result.SaveAsync("Output.png");
                 ShowImageResult();
             }
@@ -75,5 +80,13 @@ namespace RyzenAI.Example
                 UseShellExecute = true
             });
         }
+
+
+        private static IProgress<GenerateProgress> ProgressCallback => new Progress<GenerateProgress>((progress) =>
+        {
+            if (progress.Max > 0)
+                Console.WriteLine($"Step: {progress.Value}/{progress.Max} - {progress.Elapsed}ms");
+        });
+
     }
 }
